@@ -1,10 +1,7 @@
 #include <iostream>
-#include <fstream>
-#include <vector>
 #include <memory>
 #include <iomanip>
 #include <sstream>
-#include <cstdlib>
 
 #include "ray_marcher.h"
 #include "Image2d.h"

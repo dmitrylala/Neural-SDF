@@ -1,11 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <chrono>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <cstdint>
 
 
 #include "LiteMath.h"
@@ -39,8 +35,3 @@ protected:
     float    copyTime;
     float    rayMarchTime;
 };
-
-
-float3 EyeRayDir(float x, float y, float4x4 a_mViewProjInv);
-void transform_ray3f(float4x4 a_mWorldViewInv, float3* ray_pos, float3* ray_dir);
-uint32_t RealColorToUint32(float4 real_color);
