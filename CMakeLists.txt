@@ -70,27 +70,6 @@ add_subdirectory(bin/)
 
 
 # if(USE_VULKAN)
-#   add_executable(train
-#                 bin/train.cpp
-#                 nn/read_utils.cpp
-#                 nn/siren.cpp
-#                 nn/siren_generated.cpp
-#                 nn/siren_generated_ds.cpp
-#                 nn/siren_generated_init.cpp
-#                 ${VULKAN_SOURCES})
-#   target_link_libraries(train LINK_PUBLIC OpenMP::OpenMP_CXX volk "${PLATFORM_DEPENDEPNT_LIBS}")
-
-# else()
-#   add_executable(train
-#                 bin/train.cpp
-#                 nn/read_utils.cpp
-#                 nn/siren.cpp)
-#   target_link_libraries(train LINK_PUBLIC OpenMP::OpenMP_CXX)
-# endif()
-  
-  
-
-# if(USE_VULKAN)
 #   add_executable(ray_marching_example
 #                 main.cpp
 #                 example_tracer/example_tracer.cpp

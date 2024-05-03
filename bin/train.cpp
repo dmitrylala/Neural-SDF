@@ -1,9 +1,8 @@
 #include <iostream>
 #include <memory>
 
-#include "argparser.h"
 #include "siren.h"
-#include "read_utils.h"
+#include "utils.h"
 
 #ifdef USE_VULKAN
 #include "vk_context.h"
@@ -14,52 +13,6 @@ std::shared_ptr<SirenNetwork> CreateSirenNetwork_generated(vk_utils::VulkanConte
 static const bool enableValidationLayers = false;
 static const int N_COORDS = 3;
 
-
-
-std::tuple<int,int,int> parse_network_setup(const ArgParser &parser)
-{
-    int n_hidden_layers = parser.getOptionValue<int>("--n_hidden");
-    int hidden_size = parser.getOptionValue<int>("--hidden_size");
-    std::cout << "Architecture params: n_hidden = " << n_hidden_layers << \
-        ", hidden_size = " << hidden_size << std::endl;
-
-    int batch_size = parser.getOptionValue<int>("--batch_size");
-    std::cout << "Train params: batch_size = " << batch_size << std::endl;
-
-    return std::tuple<int,int,int>{n_hidden_layers, hidden_size, batch_size};
-}
-
-
-std::vector<float> parse_weights(const ArgParser &parser)
-{
-    std::vector<float> weights;
-    bool got_weights_path = parser.hasOption("--weights");
-    if (got_weights_path) {
-        std::string weights_path = parser.getOptionValue<std::string>("--weights");
-        std::cout << "Got weights file: " << weights_path << std::endl;
-        weights = read_weights(weights_path);
-    }
-    return weights;
-}
-
-
-VectorPair parse_test_points(const ArgParser &parser)
-{
-    bool got_test_points_path = parser.hasOption("--test_points");
-    if (got_test_points_path) {
-        std::string test_points_path = parser.getOptionValue<std::string>("--test_points");
-        std::cout << "Got test points path: " << test_points_path << std::endl;
-
-        auto test_points = read_test_points(test_points_path);
-
-        std::cout << "Loaded points coords: " << test_points.first.size() << \
-            ", gt sdfs: " << test_points.second.size() << std::endl;
-
-        return test_points;
-    }
-
-    return VectorPair{std::vector<float>(), std::vector<float>()};
-}
 
 
 int main(int argc, const char** argv) {
