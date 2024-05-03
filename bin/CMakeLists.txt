@@ -27,7 +27,7 @@ target_include_directories(train PUBLIC
 
 add_executable(render
                 render.cpp
-                ${CMAKE_SOURCE_DIR}/external/LiteMath/Image2d.cpp)
+                ${LITEMATH_SOURCES})
 
 target_link_libraries(render LINK_PUBLIC
                       ${CMAKE_PROJECT_NAME}_ray_marcher

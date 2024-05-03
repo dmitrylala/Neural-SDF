@@ -63,6 +63,8 @@ set(VULKAN_SOURCES
     ${CMAKE_SOURCE_DIR}/external/vkutils/vk_pipeline.cpp
     ${CMAKE_SOURCE_DIR}/external/vkutils/vk_descriptor_sets.cpp)
 
+set(LITEMATH_SOURCES
+    ${CMAKE_SOURCE_DIR}/external/LiteMath/Image2d.cpp)
 
 add_subdirectory(nn/)
 add_subdirectory(ray_marcher/)
