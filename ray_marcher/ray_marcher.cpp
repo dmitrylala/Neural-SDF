@@ -1,7 +1,7 @@
-#include "example_tracer.h"
+#include "ray_marcher.h"
 
 
-static inline float3 EyeRayDir(float x, float y, float4x4 a_mViewProjInv)
+float3 EyeRayDir(float x, float y, float4x4 a_mViewProjInv)
 {
     float4 pos = float4(2.0f * x - 1.0f, 2.0f * y - 1.0f, 0.0f, 1.0f );
     pos = a_mViewProjInv * pos;
@@ -9,7 +9,7 @@ static inline float3 EyeRayDir(float x, float y, float4x4 a_mViewProjInv)
     return normalize(to_float3(pos));
 }
 
-static inline void transform_ray3f(float4x4 a_mWorldViewInv, float3* ray_pos, float3* ray_dir) 
+void transform_ray3f(float4x4 a_mWorldViewInv, float3* ray_pos, float3* ray_dir) 
 {
     float4 rayPosTransformed = a_mWorldViewInv * to_float4(*ray_pos, 1.0f);
     float4 rayDirTransformed = a_mWorldViewInv * to_float4(*ray_dir, 0.0f);
@@ -18,7 +18,7 @@ static inline void transform_ray3f(float4x4 a_mWorldViewInv, float3* ray_pos, fl
     (*ray_dir) = to_float3(normalize(rayDirTransformed));
 }
 
-static inline uint32_t RealColorToUint32(float4 real_color)
+uint32_t RealColorToUint32(float4 real_color)
 {
     float r = real_color[0] * 255.0f;
     float g = real_color[1] * 255.0f;
@@ -64,7 +64,7 @@ float sierpinskiSDF(float3 z) {
 }
 
 
-static inline float3 EstimateNormal(float3 z)
+float3 EstimateNormal(float3 z)
 {  
     float eps = 1e-4;
     float d = sierpinskiSDF(z);
@@ -106,7 +106,7 @@ uint32_t MarchOneRay(float3 rayPos, float3 rayDir) {
     return RealColorToUint32(resColor);
 }
 
-void RayMarcherExample::kernel2D_RayMarch(uint32_t* out_color, uint32_t width, uint32_t height) 
+void RayMarcher::kernel2D_RayMarch(uint32_t* out_color, uint32_t width, uint32_t height) 
 {
     #ifdef USE_VULKAN
     #else
@@ -122,14 +122,14 @@ void RayMarcherExample::kernel2D_RayMarch(uint32_t* out_color, uint32_t width, u
     }
 }
 
-void RayMarcherExample::RayMarch(uint32_t* out_color, uint32_t width, uint32_t height)
+void RayMarcher::RayMarch(uint32_t* out_color, uint32_t width, uint32_t height)
 { 
     auto start = std::chrono::high_resolution_clock::now();
     kernel2D_RayMarch(out_color, width, height);
     rayMarchTime = float(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count())/1000.f;
 }  
 
-void RayMarcherExample::GetExecutionTime(const char* a_funcName, float a_out[4])
+void RayMarcher::GetExecutionTime(const char* a_funcName, float a_out[4])
 {
     if (std::string(a_funcName) == "RayMarch")
         a_out[0] = rayMarchTime;

@@ -6,12 +6,12 @@
 #include <sstream>
 #include <cstdlib>
 
-#include "example_tracer/example_tracer.h"
+#include "ray_marcher.h"
 #include "Image2d.h"
 
 #ifdef USE_VULKAN
 #include "vk_context.h"
-std::shared_ptr<RayMarcherExample> CreateRayMarcherExample_generated(vk_utils::VulkanContext a_ctx, size_t a_maxThreadsGenerated);
+std::shared_ptr<RayMarcher> CreateRayMarcher_generated(vk_utils::VulkanContext a_ctx, size_t a_maxThreadsGenerated);
 #else
 #include <omp.h>
 #endif
@@ -36,19 +36,19 @@ int main(int argc, const char** argv) {
     uint WIN_WIDTH  = 512;
     uint WIN_HEIGHT = 512;
 
-    std::shared_ptr<RayMarcherExample> pImpl = nullptr;
+    std::shared_ptr<RayMarcher> pImpl = nullptr;
     #ifdef USE_VULKAN
     bool onGPU = true; // TODO: you can read it from command line
     if(onGPU)
     {
     auto ctx = vk_utils::globalContextGet(enableValidationLayers, 0);
-    pImpl    = CreateRayMarcherExample_generated(ctx, WIN_WIDTH*WIN_HEIGHT);
+    pImpl    = CreateRayMarcher_generated(ctx, WIN_WIDTH*WIN_HEIGHT);
     }
     else
     #else
     bool onGPU = false;
     #endif
-    pImpl = std::make_shared<RayMarcherExample>();
+    pImpl = std::make_shared<RayMarcher>();
 
     pImpl->CommitDeviceData();
 
@@ -62,7 +62,7 @@ int main(int argc, const char** argv) {
     float4x4 viewMat = lookAt(to_float3(camPos), float3(0, 0, 0), float3(0, 1, 0));
 
     pImpl->SetWorldViewMatrix(viewMat);
-    pImpl->UpdateMembersPlainData();                                            // copy all POD members from CPU to GPU in GPU implementation
+    pImpl->UpdateMembersPlainData();
     pImpl->RayMarch(pixelData.data(), WIN_WIDTH, WIN_HEIGHT);
 
     float timings[4] = {0, 0, 0, 0};

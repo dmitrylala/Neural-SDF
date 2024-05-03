@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(neural_sdf)
 
-# get rid of annoying MSVC warnings.
+# remove MSVC warnings
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -45,8 +45,8 @@ if(WIN32)
   link_directories(${ADDITIONAL_LIBRARY_DIRS})
 endif()
 
-#uncomment this to detect broken memory problems via gcc sanitizers
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fsanitize=leak -fsanitize=undefined -fsanitize=bounds-strict")
+# detect broken memory problems via gcc sanitizers
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fsanitize=leak -fsanitize=undefined -fsanitize=bounds-strict")
 
 if(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
@@ -65,42 +65,6 @@ set(VULKAN_SOURCES
 
 
 add_subdirectory(nn/)
+add_subdirectory(ray_marcher/)
 add_subdirectory(lib/)
 add_subdirectory(bin/)
-
-
-# if(USE_VULKAN)
-#   add_executable(ray_marching_example
-#                 main.cpp
-#                 example_tracer/example_tracer.cpp
-#                 external/LiteMath/Image2d.cpp
-#                 example_tracer/example_tracer_generated.cpp
-#                 example_tracer/example_tracer_generated_ds.cpp
-#                 example_tracer/example_tracer_generated_init.cpp
-#                 ${VULKAN_SOURCES})
-#   target_link_libraries(ray_marching_example LINK_PUBLIC OpenMP::OpenMP_CXX volk "${PLATFORM_DEPENDEPNT_LIBS}")
-
-#   add_executable(train
-#                 train.cpp
-#                 nn/read_utils.cpp
-#                 nn/siren.cpp
-#                 nn/siren_generated.cpp
-#                 nn/siren_generated_ds.cpp
-#                 nn/siren_generated_init.cpp
-#                 ${VULKAN_SOURCES})
-#   target_link_libraries(train LINK_PUBLIC OpenMP::OpenMP_CXX volk "${PLATFORM_DEPENDEPNT_LIBS}")
-
-# else()
-#   add_executable(ray_marching_example
-#                 main.cpp
-#                 example_tracer/example_tracer.cpp
-#                 external/LiteMath/Image2d.cpp)
-#   target_link_libraries(ray_marching_example LINK_PUBLIC OpenMP::OpenMP_CXX)
-
-#   add_executable(train
-#                 train.cpp
-#                 nn/read_utils.cpp
-#                 nn/siren.cpp)
-#   target_link_libraries(train LINK_PUBLIC OpenMP::OpenMP_CXX)
-# endif()
-

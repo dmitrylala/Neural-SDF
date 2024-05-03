@@ -38,9 +38,9 @@ CMakeUserPresets.json
 
 # Kernel slicer cfg and generated files
 kslicer_cfg.txt
-example_tracer/include
-example_tracer/shaders_generated
-example_tracer/*generated*
+ray_marcher/include
+ray_marcher/shaders_generated
+ray_marcher/*generated*
 nn/include
 nn/shaders_generated
 nn/*generated*
