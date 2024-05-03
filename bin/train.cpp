@@ -4,23 +4,17 @@
 #include "siren.h"
 #include "utils.h"
 
-#ifdef USE_VULKAN
-#include "vk_context.h"
-std::shared_ptr<SirenNetwork> CreateSirenNetwork_generated(vk_utils::VulkanContext a_ctx, size_t a_maxThreadsGenerated);
-#endif
 
 
-static const bool enableValidationLayers = false;
-static const int N_COORDS = 3;
-
-
-
-int main(int argc, const char** argv) {
+int main(int argc, const char** argv)
+{
     ArgParser parser(argc, argv);
 
-    const auto [n_hidden_layers, hidden_size, batch_size] = parse_network_setup(parser);
+    const auto [n_hidden_layers, hidden_size, batch_size] = parser.get_network_setup();
+    std::cout << "Network setup: n_hidden = " << n_hidden_layers << \
+        ", hidden_size = " << hidden_size << ", batch_size = " << batch_size << std::endl;
 
-    const std::vector<float> weights = parse_weights(parser);
+    const std::vector<float> init_weights = parse_weights(parser);
     const auto [points, gt_sdf] = parse_test_points(parser);
 
     std::cout << "First batch_size gt sdfs:" << std::endl;
@@ -28,45 +22,30 @@ int main(int argc, const char** argv) {
         std::cout << gt_sdf[i] << " ";
     std::cout << std::endl;
 
-
-    std::shared_ptr<SirenNetwork> pImpl = nullptr;
-    #ifdef USE_VULKAN
-    bool onGPU = true;
-    if (onGPU) {
-        auto ctx = vk_utils::globalContextGet(enableValidationLayers, 0);
-        pImpl = CreateSirenNetwork_generated(ctx, batch_size);
-    } else
-    #else  
-        bool onGPU = false;
-    #endif
-    pImpl = std::make_shared<SirenNetwork>();
-
-    pImpl->init(n_hidden_layers, hidden_size, batch_size, N_COORDS, 1);
-    if (weights.size() > 0) {
-        pImpl->setWeights(weights);
-        std::cout << "Loaded weights: " << weights.size() << std::endl;
+    auto net = getSirenNetwork(n_hidden_layers, hidden_size, batch_size);
+    if (init_weights.size() > 0) {
+        net->setWeights(init_weights);
+        std::cout << "Loaded weights: " << init_weights.size() << std::endl;
     }
 
-    pImpl->CommitDeviceData();
-
-    std::cout << "Build succeeded" << std::endl;
+    net->CommitDeviceData();
 
     std::vector<float> pred_sdf(batch_size);
 
-    std::vector<float> points_batch(batch_size * N_COORDS);
+    std::vector<float> points_batch(batch_size * INPUT_DIM);
     int batch_offset = 0;
 
     int i = 0;
     for (int row = batch_offset; row < batch_offset + batch_size; ++row) {
-        for (int col = 0; col < N_COORDS; ++col) {
-            points_batch[i] = points[row * N_COORDS + col];
+        for (int col = 0; col < INPUT_DIM; ++col) {
+            points_batch[i] = points[row * INPUT_DIM + col];
             ++i;
         }
     }
-    points_batch = transpose(points_batch, batch_size, N_COORDS);
+    points_batch = transpose(points_batch, batch_size, INPUT_DIM);
 
-    pImpl->UpdateMembersPlainData();
-    pImpl->forward(pred_sdf.data(), points_batch.data());
+    net->UpdateMembersPlainData();
+    net->forward(pred_sdf.data(), points_batch.data());
 
     std::cout << "Forward done" << std::endl;
 
@@ -76,6 +55,6 @@ int main(int argc, const char** argv) {
     }
     std::cout << std::endl;
 
-    pImpl = nullptr;
+    net = nullptr;
     return 0;
 }

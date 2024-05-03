@@ -46,19 +46,18 @@ void SirenNetwork::kernel2D_sin_activation(
 }
 
 
-void SirenNetwork::init(
-    int n_hidden, int hidden_size, int batch_size, int input_dim, int out_dim)
+SirenNetwork::SirenNetwork(int n_hidden, int hidden_size, int batch_size)
 {
     m_batch_size = batch_size;
 
-    m_layers_shapes.push_back(std::pair<int,int>{hidden_size, input_dim});
+    m_layers_shapes.push_back(std::pair<int,int>{hidden_size, INPUT_DIM});
     for (int i = 0; i < n_hidden; ++i) {
         m_layers_shapes.push_back(std::pair<int,int>{hidden_size, hidden_size});
     }
-    m_layers_shapes.push_back(std::pair<int,int>{out_dim, hidden_size});
+    m_layers_shapes.push_back(std::pair<int,int>{OUTPUT_DIM, hidden_size});
 
     // input will be copied to outputs attr
-    int n_params = 0, n_outputs = m_batch_size * input_dim;
+    int n_params = 0, n_outputs = m_batch_size * INPUT_DIM;
 
     for (auto [out_dim, in_dim]: m_layers_shapes) {
         n_params += in_dim * out_dim + out_dim;
@@ -124,4 +123,16 @@ void SirenNetwork::forward(float *res, float *input)
     for (int i = 0; i < m_batch_size * last_out_dim; ++i) {
         res[i] = m_layers_outputs[res_offset + i];
     }
+}
+
+
+std::shared_ptr<SirenNetwork> getSirenNetwork(int n_hidden, int hidden_size, int batch_size)
+{
+    std::shared_ptr<SirenNetwork> pImpl = nullptr;
+    #ifdef USE_VULKAN
+    auto ctx = vk_utils::globalContextGet(false, 0);
+    pImpl = CreateSirenNetwork_generated(n_hidden, hidden_size, batch_size, ctx, batch_size);
+    #endif
+    pImpl = std::make_shared<SirenNetwork>(n_hidden, hidden_size, batch_size);
+    return pImpl;
 }

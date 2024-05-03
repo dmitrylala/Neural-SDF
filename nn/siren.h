@@ -4,18 +4,28 @@
 #include <utility>
 #include <cmath>
 #include <cstdint>
+#include <memory>
+
+
+#ifdef USE_VULKAN
+#include "vk_context.h"
+class SirenNetwork;
+std::shared_ptr<SirenNetwork> CreateSirenNetwork_generated(
+    int n_hidden, int hidden_size, int batch_size,
+    vk_utils::VulkanContext a_ctx, size_t a_maxThreadsGenerated);
+#endif
+
+
+static const int INPUT_DIM = 3;
+static const int OUTPUT_DIM = 1;
 
 
 class SirenNetwork
 {
 public:
-    SirenNetwork() {}
-
-    void init(int n_hidden, int hidden_size, int batch_size, int input_dim, int out_dim);
+    SirenNetwork(int n_hidden, int hidden_size, int batch_size);
     void setWeights(const std::vector<float> &weights);
-
     void forward(float *res, float *input);
-
 
     void kernel2D_matmul(
         float *c, float *a, float *b,
@@ -39,3 +49,6 @@ protected:
     std::vector<std::pair<int,int>> m_layers_shapes;
     int m_batch_size;
 };
+
+
+std::shared_ptr<SirenNetwork> getSirenNetwork(int n_hidden, int hidden_size, int batch_size);

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <optional>
+#include <tuple>
 
 
 class ArgParser
@@ -33,6 +34,7 @@ public:
 
     bool hasOption(const std::string &option) const;
 
+    std::tuple<int,int,int> get_network_setup() const;
 private:
     std::vector<std::string> _tokens;
 

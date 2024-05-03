@@ -35,20 +35,6 @@ VectorPair read_test_points(const std::string &test_points_path)
 }
 
 
-std::tuple<int,int,int> parse_network_setup(const ArgParser &parser)
-{
-    int n_hidden_layers = parser.getOptionValue<int>("--n_hidden");
-    int hidden_size = parser.getOptionValue<int>("--hidden_size");
-    std::cout << "Architecture params: n_hidden = " << n_hidden_layers << \
-        ", hidden_size = " << hidden_size << std::endl;
-
-    int batch_size = parser.getOptionValue<int>("--batch_size");
-    std::cout << "Train params: batch_size = " << batch_size << std::endl;
-
-    return std::tuple<int,int,int>{n_hidden_layers, hidden_size, batch_size};
-}
-
-
 std::vector<float> parse_weights(const ArgParser &parser)
 {
     std::vector<float> weights;
