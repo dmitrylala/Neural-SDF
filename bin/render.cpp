@@ -1,10 +1,10 @@
 #include <iostream>
 #include <memory>
-#include <iomanip>
-#include <sstream>
+
+#include "Image2d.h"
+#include "argparser.h"
 
 #include "ray_marcher.h"
-#include "Image2d.h"
 
 #ifdef USE_VULKAN
 static const bool onGPU = true;
@@ -13,15 +13,15 @@ static const bool onGPU = false;
 #endif
 
 
+static const int WIN_HEIGHT = 512;
+static const int WIN_WIDTH = 512;
 
-int main(int argc, const char** argv) {
-    int n_omp_threads = 1;
-    if (argc > 1) {
-        n_omp_threads = std::max(atoi(argv[1]), 1);
-    }
 
-    uint WIN_WIDTH  = 512;
-    uint WIN_HEIGHT = 512;
+
+int main(int argc, const char** argv)
+{
+    ArgParser parser(argc, argv);
+    const int n_omp_threads = parser.get_n_threads();
 
     auto ray_marcher = getRayMarcher(WIN_WIDTH * WIN_HEIGHT, n_omp_threads);
     ray_marcher->CommitDeviceData();
@@ -41,15 +41,13 @@ int main(int argc, const char** argv) {
     float timings[4] = {0, 0, 0, 0};
     ray_marcher->GetExecutionTime("RayMarch", timings);
 
-    std::stringstream strOut;
+    std::string save_to;
     if (onGPU)
-        strOut << std::fixed << std::setprecision(2) << "out_gpu.bmp";
+        save_to = "out_gpu.bmp";
     else
-        strOut << std::fixed << std::setprecision(2) << "out_cpu.bmp";
+        save_to = "out_cpu.bmp";
 
-    std::string fileName = strOut.str();
-
-    LiteImage::SaveBMP(fileName.c_str(), pixelData.data(), WIN_WIDTH, WIN_HEIGHT);
+    LiteImage::SaveBMP(save_to.c_str(), pixelData.data(), WIN_WIDTH, WIN_HEIGHT);
 
     std::cout << "n_threads = " << n_omp_threads << ", onGPU = " << onGPU << std::endl;
     std::cout << "timeRender = " << timings[0] << " ms, timeCopy = " <<  timings[1] + timings[2] << " ms " << std::endl;

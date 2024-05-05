@@ -35,6 +35,7 @@ public:
     bool hasOption(const std::string &option) const;
 
     std::tuple<int,int,int> get_network_setup() const;
+    int get_n_threads() const;
 private:
     std::vector<std::string> _tokens;
 
