@@ -80,7 +80,7 @@ void SirenNetwork::setWeights(const std::vector<float> &weights)
 }
 
 
-void SirenNetwork::forward(float *res, float *input)
+void SirenNetwork::forward(float *res, const float *input)
 {
     int first_in_dim = m_layers_shapes.front().second;
     for (int i = 0; i < m_batch_size * first_in_dim; ++i) {
@@ -132,7 +132,8 @@ std::shared_ptr<SirenNetwork> getSirenNetwork(int n_hidden, int hidden_size, int
     #ifdef USE_VULKAN
     auto ctx = vk_utils::globalContextGet(false, 0);
     pImpl = CreateSirenNetwork_generated(n_hidden, hidden_size, batch_size, ctx, batch_size);
-    #endif
+    #else
     pImpl = std::make_shared<SirenNetwork>(n_hidden, hidden_size, batch_size);
+    #endif
     return pImpl;
 }

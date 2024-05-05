@@ -25,7 +25,7 @@ class SirenNetwork
 public:
     SirenNetwork(int n_hidden, int hidden_size, int batch_size);
     void setWeights(const std::vector<float> &weights);
-    void forward(float *res, float *input);
+    void forward(float *res, const float *input);
 
     void kernel2D_matmul(
         float *c, float *a, float *b,
