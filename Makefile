@@ -1,3 +1,6 @@
+TOOLCHAIN_FILE=$(BUILD_DIR)/build/$(BUILD_TYPE)/generators/conan_toolchain.cmake
+
+
 help:  ## Show help
 	@grep -E '^[.a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
@@ -16,7 +19,7 @@ build_cpu: ## Configure and build for CPU
 	conan install . --build=missing --output-folder=$(BUILD_DIR)
 	cmake -B $(BUILD_DIR) \
 		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
-		-DCMAKE_TOOLCHAIN_FILE=$(BUILD_DIR)/build/$(BUILD_TYPE)/generators/conan_toolchain.cmake
+		-DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_FILE)
 	cmake --build $(BUILD_DIR) --target train render nn_test -j8
 
 run_kslicer: ## Generate Vulkan code with kslicer
@@ -28,7 +31,7 @@ build_gpu: run_kslicer ## Configure and build for GPU
 	conan install . --build=missing --output-folder=$(BUILD_DIR)
 	cmake -B $(BUILD_DIR) \
 		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
-		-DCMAKE_TOOLCHAIN_FILE=$(BUILD_DIR)/build/$(BUILD_TYPE)/generators/conan_toolchain.cmake \
+		-DCMAKE_TOOLCHAIN_FILE=$(TOOLCHAIN_FILE) \
 		-DUSE_VULKAN=ON
 	cmake --build $(BUILD_DIR) --target train render -j8
 
