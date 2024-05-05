@@ -78,6 +78,7 @@ float3 EstimateNormal(float3 z)
     ));
 }
 
+
 uint32_t MarchOneRay(float3 rayPos, float3 rayDir) {
 
     int max_iterations = 10000;
@@ -109,6 +110,7 @@ uint32_t MarchOneRay(float3 rayPos, float3 rayDir) {
     return RealColorToUint32(resColor);
 }
 
+
 void RayMarcher::kernel2D_RayMarch(uint32_t* out_color, uint32_t width, uint32_t height) 
 {
     #ifdef USE_VULKAN
@@ -125,6 +127,7 @@ void RayMarcher::kernel2D_RayMarch(uint32_t* out_color, uint32_t width, uint32_t
     }
 }
 
+
 void RayMarcher::RayMarch(uint32_t* out_color, uint32_t width, uint32_t height)
 { 
     auto start = std::chrono::high_resolution_clock::now();
@@ -132,8 +135,23 @@ void RayMarcher::RayMarch(uint32_t* out_color, uint32_t width, uint32_t height)
     rayMarchTime = float(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count())/1000.f;
 }  
 
+
 void RayMarcher::GetExecutionTime(const char* a_funcName, float a_out[4])
 {
     if (std::string(a_funcName) == "RayMarch")
         a_out[0] = rayMarchTime;
+}
+
+
+std::shared_ptr<RayMarcher> getRayMarcher(uint n_pixels, int n_omp_threads)
+{
+    std::shared_ptr<RayMarcher> pImpl = nullptr;
+    #ifdef USE_VULKAN
+    auto ctx = vk_utils::globalContextGet(false, 0);
+    pImpl = CreateRayMarcher_generated(ctx, n_pixels);
+    #else
+    omp_set_num_threads(n_omp_threads);
+    pImpl = std::make_shared<RayMarcher>();
+    #endif
+    return pImpl;
 }

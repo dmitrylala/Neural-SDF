@@ -2,8 +2,7 @@ project(${PROJECT_NAME}_app)
 
 
 set(${PROJECT_NAME}_libraries
-    ${CMAKE_PROJECT_NAME}_lib
-    OpenMP::OpenMP_CXX)
+    ${CMAKE_PROJECT_NAME}_lib)
 
 if(USE_VULKAN)
   list(APPEND ${PROJECT_NAME}_libraries

@@ -12,3 +12,7 @@ else()
   add_library(${PROJECT_NAME} STATIC
               ray_marcher.cpp)
 endif()
+
+
+target_link_libraries(${PROJECT_NAME} PUBLIC
+                      OpenMP::OpenMP_CXX)

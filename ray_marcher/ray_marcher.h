@@ -1,11 +1,21 @@
 #pragma once
 
 #include <chrono>
+#include <memory>
 #include <string>
-
 
 #include "LiteMath.h"
 using namespace LiteMath;
+
+
+#ifdef USE_VULKAN
+#include "vk_context.h"
+class RayMarcher;
+std::shared_ptr<RayMarcher> CreateRayMarcher_generated(
+    vk_utils::VulkanContext a_ctx, size_t a_maxThreadsGenerated);
+#else
+#include <omp.h>
+#endif
 
 
 class RayMarcher
@@ -35,3 +45,6 @@ protected:
     float    copyTime;
     float    rayMarchTime;
 };
+
+
+std::shared_ptr<RayMarcher> getRayMarcher(uint n_pixels, int n_omp_threads);
