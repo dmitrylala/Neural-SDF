@@ -48,3 +48,11 @@ render: ## Run render
 test_unit: ## Run unit tests
 	@echo "=== Running unit tests ==="
 	./$(BUILD_DIR)/test/unit/nn_test
+
+infer_py: ## Run network inference on python
+	@echo "=== Running inference on python ==="
+	python scripts/infer.py \
+		data/sdf1_weights.bin \
+		data/sdf1_test.bin \
+		--n_hidden 2 \
+		--hidden_size 64

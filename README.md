@@ -46,6 +46,7 @@ build_gpu                      Configure and build for GPU
 train                          Run train
 render                         Run render
 test_unit                      Run unit tests
+infer_py                       Run network inference on python
 ```
 
 Собираем под CPU и запускаем трейн:
