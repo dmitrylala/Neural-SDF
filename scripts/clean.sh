@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Removing ${BUILD_DIR}"
-rm -rf ${BUILD_DIR}
+rm -rf ${BUILD_DIR} CMakeUserPresets.json
 
 echo "Cleaning GPU apps"
 

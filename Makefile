@@ -26,7 +26,10 @@ run_kslicer: ## Generate Vulkan code with kslicer
 build_gpu: run_kslicer ## Configure and build for GPU
 	@echo "=== Building for GPU ==="
 	conan install . --build=missing --output-folder=$(BUILD_DIR)
-	cmake -B $(BUILD_DIR) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DUSE_VULKAN=ON
+	cmake -B $(BUILD_DIR) \
+		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+		-DCMAKE_TOOLCHAIN_FILE=$(BUILD_DIR)/build/$(BUILD_TYPE)/generators/conan_toolchain.cmake \
+		-DUSE_VULKAN=ON
 	cmake --build $(BUILD_DIR) --target train render -j8
 
 train: ## Run train

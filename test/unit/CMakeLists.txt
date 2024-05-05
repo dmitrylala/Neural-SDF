@@ -10,6 +10,7 @@ add_executable(nn_test ${EXE_SOURCES})
 
 target_link_libraries(nn_test PRIVATE
                         ${CMAKE_PROJECT_NAME}_nn
+                        ${CMAKE_PROJECT_NAME}_lib
                         Catch2::Catch2WithMain)
 
 target_include_directories(nn_test PRIVATE

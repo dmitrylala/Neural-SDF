@@ -30,11 +30,11 @@ public:
     void kernel2D_matmul(
         float *c, float *a, float *b,
         uint32_t a_rows, uint32_t b_rows, uint32_t b_cols,
-        uint32_t c_offset, uint32_t a_offset, uint32_t b_offset);
+        uint32_t c_offset = 0, uint32_t a_offset = 0, uint32_t b_offset = 0);
     void kernel2D_add_bias(
         float *res, float *inp, float *vec,
         uint32_t n_rows, uint32_t n_cols,
-        uint32_t res_offset, uint32_t input_offset, uint32_t vec_offset);
+        uint32_t res_offset = 0, uint32_t input_offset = 0, uint32_t vec_offset = 0);
     void kernel2D_sin_activation(
         float *res, float *inp,
         uint32_t n_rows, uint32_t n_cols,
