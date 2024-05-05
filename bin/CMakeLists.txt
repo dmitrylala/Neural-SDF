@@ -21,8 +21,7 @@ target_link_libraries(train LINK_PUBLIC
 
 target_include_directories(train PUBLIC
                             ${CMAKE_SOURCE_DIR}/include
-                            ${CMAKE_SOURCE_DIR}/nn
-                            ${CMAKE_SOURCE_DIR}/nn/include)
+                            ${NN_INCLUDE_DIRS})
 
 
 add_executable(render

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-rm -f kslicer_cfg.txt
-cat >> kslicer_cfg.txt << EOF
+rm -f $KSLICER_CFG
+cat >> $KSLICER_CFG << EOF
 $1
 $2
 EOF

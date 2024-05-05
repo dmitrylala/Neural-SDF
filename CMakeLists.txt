@@ -66,7 +66,13 @@ set(VULKAN_SOURCES
 set(LITEMATH_SOURCES
     ${CMAKE_SOURCE_DIR}/external/LiteMath/Image2d.cpp)
 
+set(NN_INCLUDE_DIRS
+    ${CMAKE_SOURCE_DIR}/nn
+    ${CMAKE_SOURCE_DIR}/nn/include
+)
+
 add_subdirectory(nn/)
 add_subdirectory(ray_marcher/)
 add_subdirectory(lib/)
+add_subdirectory(test/unit/)
 add_subdirectory(bin/)

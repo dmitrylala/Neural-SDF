@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "neural-sdf"
+version = "0.1.0"
+description = "Neural SDF training and rendering on C++ and Vulkan"
+authors = ["Dmitry Nesterov <dim.nesterov2015@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+conan = "2.2.0"
+
+
+[tool.poetry.group.dev.dependencies]
+cpplint = "^1.6.1"
+numpy = "^1.26.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
