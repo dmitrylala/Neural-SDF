@@ -15,4 +15,8 @@ endif()
 
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-                      OpenMP::OpenMP_CXX)
+                      OpenMP::OpenMP_CXX
+                      ${CMAKE_PROJECT_NAME}_nn)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+                          ${NN_INCLUDE_DIRS})

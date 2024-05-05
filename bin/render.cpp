@@ -5,6 +5,7 @@
 #include "argparser.h"
 
 #include "ray_marcher.h"
+#include "utils.h"
 
 #ifdef USE_VULKAN
 static const bool onGPU = true;
@@ -22,8 +23,16 @@ int main(int argc, const char** argv)
 {
     ArgParser parser(argc, argv);
     const int n_omp_threads = parser.get_n_threads();
+    const std::vector<float> weights = parse_weights(parser);
+
+    std::cout << "Running with n_threads = " << n_omp_threads << ", onGPU = " \
+        << onGPU << std::endl;
 
     auto ray_marcher = getRayMarcher(WIN_WIDTH * WIN_HEIGHT, n_omp_threads);
+    auto net = getSirenNetwork(2, 64, 10);
+    net->setWeights(weights);
+    net->CommitDeviceData();
+    ray_marcher->SetSDFNetwork(net);
     ray_marcher->CommitDeviceData();
 
     std::vector<uint> pixelData(WIN_WIDTH*WIN_HEIGHT);
@@ -40,17 +49,15 @@ int main(int argc, const char** argv)
 
     float timings[4] = {0, 0, 0, 0};
     ray_marcher->GetExecutionTime("RayMarch", timings);
+    std::cout << "Rendering done, timeRender = " << timings[0] << " ms, timeCopy = " \
+        <<  timings[1] + timings[2] << " ms " << std::endl;
 
     std::string save_to;
     if (onGPU)
         save_to = "out_gpu.bmp";
     else
         save_to = "out_cpu.bmp";
-
     LiteImage::SaveBMP(save_to.c_str(), pixelData.data(), WIN_WIDTH, WIN_HEIGHT);
-
-    std::cout << "n_threads = " << n_omp_threads << ", onGPU = " << onGPU << std::endl;
-    std::cout << "timeRender = " << timings[0] << " ms, timeCopy = " <<  timings[1] + timings[2] << " ms " << std::endl;
 
     ray_marcher = nullptr;
     return 0;

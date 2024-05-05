@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <chrono>
 
 #include "siren.h"
 #include "utils.h"
@@ -45,9 +46,15 @@ int main(int argc, const char** argv)
     points_batch = transpose(points_batch, batch_size, INPUT_DIM);
 
     net->UpdateMembersPlainData();
-    net->forward(pred_sdf.data(), points_batch.data());
 
-    std::cout << "Forward done" << std::endl;
+    int k = 100;
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < k; ++i) {
+        net->forward(pred_sdf.data(), points_batch.data());
+    }
+    auto elapsed = float(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count())/1000.f;
+
+    std::cout << k << " times forward done, elapsed = " << elapsed << std::endl;
 
     std::cout << "First batch_size predicted sdf values:" << std::endl;
     for (int i = 0; i < batch_size; ++i) {

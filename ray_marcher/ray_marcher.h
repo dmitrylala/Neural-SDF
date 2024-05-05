@@ -17,6 +17,9 @@ std::shared_ptr<RayMarcher> CreateRayMarcher_generated(
 #include <omp.h>
 #endif
 
+#include "siren.h"
+
+
 
 class RayMarcher
 {
@@ -30,7 +33,8 @@ public:
         m_worldViewProjInv  = inverse4x4(proj); 
     }
 
-    void SetWorldViewMatrix(const float4x4& a_mat) {m_worldViewInv = inverse4x4(a_mat);}
+    void SetWorldViewMatrix(const float4x4& a_mat) { m_worldViewInv = inverse4x4(a_mat); }
+    void SetSDFNetwork(std::shared_ptr<SirenNetwork> net) { m_network = net; }
 
     virtual void kernel2D_RayMarch(uint32_t* out_color, uint32_t width, uint32_t height);
     virtual void RayMarch(uint32_t* out_color [[size("width*height")]], uint32_t width, uint32_t height);
@@ -44,6 +48,7 @@ protected:
     float4x4 m_worldViewInv;
     float    copyTime;
     float    rayMarchTime;
+    std::shared_ptr<SirenNetwork> m_network;
 };
 
 
