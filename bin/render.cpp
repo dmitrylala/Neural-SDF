@@ -29,6 +29,8 @@ int main(int argc, const char** argv)
     const auto [n_hidden_layers, hidden_size, batch_size] = parser.get_network_setup();
     const auto weights = load_floats(parser.getOptionValue<std::string>("--weights"));
 
+    const std::string save_to = parser.getOptionValue<std::string>("--save_to");
+
     auto net = getSirenNetwork(n_hidden_layers, hidden_size, batch_size);
     net->setWeights(weights);
     net->CommitDeviceData();
@@ -43,12 +45,8 @@ int main(int argc, const char** argv)
         std::chrono::high_resolution_clock::now() - start).count()) / 1000.f;
     std::cout << "Render done, elapsed = " << renderTime << " ms" << std::endl;
 
-    std::string save_to;
-    if (onGPU)
-        save_to = "out_gpu.bmp";
-    else
-        save_to = "out_cpu.bmp";
     LiteImage::SaveBMP(save_to.c_str(), pixelData.data(), resolution, resolution);
+    std::cout << "Saved to: " << save_to << std::endl;
 
     return 0;
 }
