@@ -65,7 +65,7 @@ std::vector<std::vector<float>> batchify(const std::vector<float> &matrix,
             for (int col = 0; col < n_cols; ++col)
                 batch.push_back(matrix[row * n_cols + col]);
         }
-        batches.push_back(transpose(batch, batch.size() / n_cols, n_cols));
+        batches.push_back(batch);
     }
 
     return batches;

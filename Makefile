@@ -40,7 +40,7 @@ train: ## Run train
 	./$(BUILD_DIR)/bin/train \
 		--n_hidden 2 \
 		--hidden_size 64 \
-		--batch_size 512 \
+		--batch_size 5000 \
 		--train_sample data/sdf1_points.bin \
 		--train_cfg conf/train.txt \
 		--save_to data/sdf1_trained_weights.bin

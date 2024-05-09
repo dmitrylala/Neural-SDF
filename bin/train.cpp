@@ -27,9 +27,9 @@ int main(int argc, const char** argv)
     net->CommitDeviceData();
     net->UpdateMembersPlainData();
 
-    int n_batches = (sdfs.size() + batch_size) / batch_size;
-    std::vector<std::vector<float>> x_batches = batchify(points, batch_size, n_batches, 3);
-    std::vector<std::vector<float>> y_batches = batchify(sdfs, batch_size, n_batches, 1);
+    int n_batches = (sdfs.size() + batch_size - 1) / batch_size;
+    std::vector<std::vector<float>> x_batches = batchify(points, batch_size, n_batches, INPUT_DIM);
+    std::vector<std::vector<float>> y_batches = batchify(sdfs, batch_size, n_batches, OUTPUT_DIM);
 
     std::cout << "Running train with lr: " << train_cfg.lr << ", n_epochs: " << \
         train_cfg.n_epochs << std::endl;
@@ -40,8 +40,8 @@ int main(int argc, const char** argv)
 
         std::vector<float> epoch_losses(n_batches);
         for (auto batch_idx: batch_idxs) {
-            auto x_batch = x_batches[batch_idx];
             auto y_batch = y_batches[batch_idx];
+            auto x_batch = transpose(x_batches[batch_idx], y_batch.size(), INPUT_DIM);
             std::vector<float> preds(y_batch.size());
 
             net->forward(preds.data(), x_batch.data(), y_batch.size());
@@ -69,7 +69,7 @@ int main(int argc, const char** argv)
     std::ofstream fout(save_to, std::ios::out | std::ios::binary);
     fout.write((char*)&weights[0], weights.size() * sizeof(float));
     fout.close();
-    std::cout << "Saved weights to = " << save_to << std::endl;
+    std::cout << "Saved weights to: " << save_to << std::endl;
 
     net = nullptr;
     return 0;
