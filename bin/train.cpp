@@ -62,8 +62,8 @@ int main(int argc, const char** argv)
     }
 
     auto elapsed = float(std::chrono::duration_cast<std::chrono::microseconds>(
-        std::chrono::high_resolution_clock::now() - start).count()) / 1000.f;
-    std::cout << "Training finished, elapsed = " << elapsed << " ms" << std::endl;
+        std::chrono::high_resolution_clock::now() - start).count()) / 1e6f;
+    std::cout << "Training finished, elapsed = " << elapsed << " sec" << std::endl;
 
     auto weights = net->getWeights();
     std::ofstream fout(save_to, std::ios::out | std::ios::binary);

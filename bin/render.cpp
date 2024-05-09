@@ -42,8 +42,8 @@ int main(int argc, const char** argv)
     auto start = std::chrono::high_resolution_clock::now();
     std::vector<uint> pixelData = ray_marcher.render(resolution, resolution);
     float renderTime = float(std::chrono::duration_cast<std::chrono::microseconds>(
-        std::chrono::high_resolution_clock::now() - start).count()) / 1000.f;
-    std::cout << "Render done, elapsed = " << renderTime << " ms" << std::endl;
+        std::chrono::high_resolution_clock::now() - start).count()) / 1e6f;
+    std::cout << "Render done, elapsed = " << renderTime << " sec" << std::endl;
 
     LiteImage::SaveBMP(save_to.c_str(), pixelData.data(), resolution, resolution);
     std::cout << "Saved to: " << save_to << std::endl;
