@@ -1,10 +1,9 @@
 #include <iostream>
-#include <memory>
 #include <chrono>
 
 #include "Image2d.h"
-#include "argparser.h"
 
+#include "argparser.h"
 #include "ray_marcher.h"
 
 #ifdef USE_VULKAN
