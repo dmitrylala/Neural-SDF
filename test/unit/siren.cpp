@@ -72,8 +72,8 @@ TEST_CASE( "add bias", "[siren]" )
 
 TEST_CASE( "forward on test points", "[siren]" )
 {
-    const std::vector<float> init_weights = load_floats("data/sdf1_weights.bin");
-    const auto [points, gt_sdf] = load_points("data/sdf1_test.bin");
+    const std::vector<float> init_weights = load_floats("data/weights/sdf1_gt_weights.bin");
+    const auto [points, gt_sdf] = load_points("data/points/sdf1_test.bin");
 
     const int batch_size = gt_sdf.size();
 

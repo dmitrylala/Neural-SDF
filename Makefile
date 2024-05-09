@@ -40,10 +40,10 @@ train: ## Run train
 	./$(BUILD_DIR)/bin/train \
 		--n_hidden 2 \
 		--hidden_size 64 \
-		--batch_size 5000 \
-		--train_sample data/sdf1_points.bin \
-		--train_cfg conf/train.txt \
-		--save_to data/sdf1_trained_weights.bin
+		--batch_size 500 \
+		--train_sample $(POINTS)/sdf1_train.bin \
+		--train_cfg $(CONF)/train.txt \
+		--save_to $(WEIGHTS)/sdf1_trained_weights_500.bin
 
 render: ## Run render
 	@echo "=== Running render ==="
@@ -51,9 +51,10 @@ render: ## Run render
 		--n_hidden 2 \
 		--hidden_size 64 \
 		--batch_size 1 \
-		--weights data/sdf1_trained_weights.bin \
-		--camera conf/camera_1.txt \
-		--light conf/light.txt
+		--weights $(WEIGHTS)/sdf1_gt_weights.bin \
+		--camera $(CONF)/camera_1.txt \
+		--light $(CONF)/light.txt \
+		--save_to $(PICTURES)/out_cpu_gt.bmp
 
 test_unit: ## Run unit tests
 	@echo "=== Running unit tests ==="
@@ -62,7 +63,7 @@ test_unit: ## Run unit tests
 infer_py: ## Run network inference on python
 	@echo "=== Running inference on python ==="
 	python scripts/infer.py \
-		data/sdf1_weights.bin \
-		data/sdf1_test.bin \
+		$(WEIGHTS)/sdf1_gt_weights.bin \
+		$(POINTS)/sdf1_test.bin \
 		--n_hidden 2 \
 		--hidden_size 64
