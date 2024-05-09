@@ -51,19 +51,30 @@ render: ## Run render
 		--n_hidden 2 \
 		--hidden_size 64 \
 		--batch_size 1 \
-		--weights $(WEIGHTS)/sdf1_gt_weights.bin \
+		--weights $(WEIGHTS)/numpy_bsize_512.bin \
 		--camera $(CONF)/camera_1.txt \
 		--light $(CONF)/light.txt \
-		--save_to $(PICTURES)/out_cpu_gt.bmp
+		--save_to $(PICTURES)/out_cpu_numpy_bsize_512.bmp
 
 test_unit: ## Run unit tests
 	@echo "=== Running unit tests ==="
 	./$(BUILD_DIR)/test/unit/nn_test
 
+train_py: ## Train network with numpy
+	@echo "=== Running train with numpy ==="
+	python scripts/train.py \
+		--train_points $(POINTS)/sdf1_train.bin \
+		--n_hidden 2 \
+		--hidden_size 64 \
+		--n_epochs 1500 \
+		--batch_size 512 \
+		--save_to $(WEIGHTS)/numpy_bsize_512.bin \
+		-v
+
 infer_py: ## Run network inference on python
 	@echo "=== Running inference on python ==="
 	python scripts/infer.py \
-		$(WEIGHTS)/sdf1_gt_weights.bin \
-		$(POINTS)/sdf1_test.bin \
+		--weights $(WEIGHTS)/sdf1_gt_weights.bin \
+		--points $(POINTS)/sdf1_test.bin \
 		--n_hidden 2 \
 		--hidden_size 64

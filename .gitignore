@@ -36,6 +36,9 @@ build/
 build-release/
 CMakeUserPresets.json
 
+# Python generated files
+__pycache__/
+
 # Kernel slicer cfg and generated files
 kslicer_cfg.txt
 ray_marcher/include
