@@ -51,10 +51,10 @@ render: ## Run render
 		--n_hidden 2 \
 		--hidden_size 64 \
 		--batch_size 1 \
-		--weights $(WEIGHTS)/numpy_bsize_512.bin \
+		--weights $(WEIGHTS)/sdf1_trained_weights_500.bin \
 		--camera $(CONF)/camera_1.txt \
 		--light $(CONF)/light.txt \
-		--save_to $(PICTURES)/out_cpu_numpy_bsize_512.bmp
+		--save_to $(PICTURES)/out_cpu_cpp_bsize_500.bmp
 
 test_unit: ## Run unit tests
 	@echo "=== Running unit tests ==="
