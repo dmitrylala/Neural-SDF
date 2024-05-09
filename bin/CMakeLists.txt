@@ -2,7 +2,8 @@ project(${PROJECT_NAME}_app)
 
 
 set(${PROJECT_NAME}_libraries
-    ${CMAKE_PROJECT_NAME}_lib)
+    ${CMAKE_PROJECT_NAME}_lib
+    ${CMAKE_PROJECT_NAME}_nn)
 
 if(USE_VULKAN)
   list(APPEND ${PROJECT_NAME}_libraries
@@ -15,7 +16,6 @@ add_executable(train
                 train.cpp)
 
 target_link_libraries(train LINK_PUBLIC
-                      ${CMAKE_PROJECT_NAME}_nn
                       ${${PROJECT_NAME}_libraries})
 
 target_include_directories(train PUBLIC
@@ -24,14 +24,11 @@ target_include_directories(train PUBLIC
 
 
 add_executable(render
-                render.cpp
-                ${LITEMATH_SOURCES})
+                render.cpp)
 
 target_link_libraries(render LINK_PUBLIC
-                      ${CMAKE_PROJECT_NAME}_ray_marcher
                       ${${PROJECT_NAME}_libraries})
 
 target_include_directories(render PUBLIC
                             ${CMAKE_SOURCE_DIR}/include
-                            ${CMAKE_SOURCE_DIR}/ray_marcher
-                            ${CMAKE_SOURCE_DIR}/ray_marcher/include)
+                            ${NN_INCLUDE_DIRS})

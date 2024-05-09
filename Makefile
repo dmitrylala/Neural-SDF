@@ -40,13 +40,20 @@ train: ## Run train
 	./$(BUILD_DIR)/bin/train \
 		--n_hidden 2 \
 		--hidden_size 64 \
-		--batch_size 40 \
-		--test_points data/sdf1_test.bin \
-		--weights data/sdf1_weights.bin
+		--batch_size 512 \
+		--train_sample data/sdf1_points.bin \
+		--train_cfg conf/train.txt \
+		--save_to data/sdf1_trained_weights.bin
 
 render: ## Run render
 	@echo "=== Running render ==="
-	./$(BUILD_DIR)/bin/render
+	./$(BUILD_DIR)/bin/render \
+		--n_hidden 2 \
+		--hidden_size 64 \
+		--batch_size 1 \
+		--weights data/sdf1_trained_weights.bin \
+		--camera conf/camera_1.txt \
+		--light conf/light.txt
 
 test_unit: ## Run unit tests
 	@echo "=== Running unit tests ==="

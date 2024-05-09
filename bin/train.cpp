@@ -1,9 +1,10 @@
 #include <iostream>
-#include <memory>
 #include <chrono>
 
 #include "siren.h"
+#include "argparser.h"
 #include "utils.h"
+#include "configs.h"
 
 
 
@@ -15,52 +16,60 @@ int main(int argc, const char** argv)
     std::cout << "Network setup: n_hidden = " << n_hidden_layers << \
         ", hidden_size = " << hidden_size << ", batch_size = " << batch_size << std::endl;
 
-    const std::vector<float> init_weights = parse_weights(parser);
-    const auto [points, gt_sdf] = parse_test_points(parser);
+    const auto [points, sdfs] = load_points(
+        parser.getOptionValue<std::string>("--train_sample"));
 
-    std::cout << "First batch_size gt sdfs:" << std::endl;
-    for (int i = 0; i < batch_size; ++i)
-        std::cout << gt_sdf[i] << " ";
-    std::cout << std::endl;
+    const auto train_cfg = load_train_cfg(parser.getOptionValue<std::string>("--train_cfg"));
+
+    const std::string save_to = parser.getOptionValue<std::string>("--save_to");
 
     auto net = getSirenNetwork(n_hidden_layers, hidden_size, batch_size);
-    if (init_weights.size() > 0) {
-        net->setWeights(init_weights);
-        std::cout << "Loaded weights: " << init_weights.size() << std::endl;
-    }
-
     net->CommitDeviceData();
-
-    std::vector<float> pred_sdf(batch_size);
-
-    std::vector<float> points_batch(batch_size * INPUT_DIM);
-    int batch_offset = 0;
-
-    int i = 0;
-    for (int row = batch_offset; row < batch_offset + batch_size; ++row) {
-        for (int col = 0; col < INPUT_DIM; ++col) {
-            points_batch[i] = points[row * INPUT_DIM + col];
-            ++i;
-        }
-    }
-    points_batch = transpose(points_batch, batch_size, INPUT_DIM);
-
     net->UpdateMembersPlainData();
 
-    int k = 100;
+    int n_batches = (sdfs.size() + batch_size) / batch_size;
+    std::vector<std::vector<float>> x_batches = batchify(points, batch_size, n_batches, 3);
+    std::vector<std::vector<float>> y_batches = batchify(sdfs, batch_size, n_batches, 1);
+
+    std::cout << "Running train with lr: " << train_cfg.lr << ", n_epochs: " << \
+        train_cfg.n_epochs << std::endl;
+
     auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < k; ++i) {
-        net->forward(pred_sdf.data(), points_batch.data());
-    }
-    auto elapsed = float(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - start).count())/1000.f;
+    for (int epoch = 0; epoch < train_cfg.n_epochs; ++epoch) {
+        auto batch_idxs = shuffle_batch_idxs(n_batches);
 
-    std::cout << k << " times forward done, elapsed = " << elapsed << std::endl;
+        std::vector<float> epoch_losses(n_batches);
+        for (auto batch_idx: batch_idxs) {
+            auto x_batch = x_batches[batch_idx];
+            auto y_batch = y_batches[batch_idx];
+            std::vector<float> preds(y_batch.size());
 
-    std::cout << "First batch_size predicted sdf values:" << std::endl;
-    for (int i = 0; i < batch_size; ++i) {
-        std::cout << pred_sdf[i] << " ";
+            net->forward(preds.data(), x_batch.data(), y_batch.size());
+
+            float loss = mse_loss(preds, y_batch);
+            epoch_losses[batch_idx] = loss;
+            net->backward(y_batch.data());
+            net->step(train_cfg.lr);
+        }
+
+        float mean_epoch_loss = 0.0f;
+        for (auto loss: epoch_losses)
+            mean_epoch_loss += loss;
+        mean_epoch_loss /= n_batches;
+
+        if (epoch % train_cfg.log_every_n_epochs == 0)
+            std::cout << "Epoch: " << epoch << ", loss: " << mean_epoch_loss << std::endl;
     }
-    std::cout << std::endl;
+
+    auto elapsed = float(std::chrono::duration_cast<std::chrono::microseconds>(
+        std::chrono::high_resolution_clock::now() - start).count()) / 1000.f;
+    std::cout << "Training finished, elapsed = " << elapsed << " ms" << std::endl;
+
+    auto weights = net->getWeights();
+    std::ofstream fout(save_to, std::ios::out | std::ios::binary);
+    fout.write((char*)&weights[0], weights.size() * sizeof(float));
+    fout.close();
+    std::cout << "Saved weights to = " << save_to << std::endl;
 
     net = nullptr;
     return 0;

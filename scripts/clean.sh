@@ -5,6 +5,6 @@ rm -rf ${BUILD_DIR} CMakeUserPresets.json
 
 echo "Cleaning GPU apps"
 
-for app in "nn" "ray_marcher" ; do
+for app in "nn" ; do
     rm -rf $app/include $app/shaders_generated $app/*generated* ;
 done

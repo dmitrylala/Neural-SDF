@@ -28,12 +28,6 @@ END
 )
 
 
-$kslicer_exe $current_directory/ray_marcher/ray_marcher.cpp \
--mainClass "RayMarcher" \
--shaderFolderPrefix "ray_marcher/" \
-${KSLICER_OPTIONS}
-
-
 $kslicer_exe $current_directory/nn/siren.cpp \
 -mainClass "SirenNetwork" \
 -shaderFolderPrefix "nn/" \
@@ -41,6 +35,6 @@ ${KSLICER_OPTIONS}
 
 
 cd $current_directory
-for app in "nn" "ray_marcher" ; do
+for app in "nn" ; do
   cd $app/shaders_generated/ && bash build.sh && cd ../.. ;
 done

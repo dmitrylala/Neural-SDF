@@ -72,7 +72,6 @@ set(NN_INCLUDE_DIRS
 )
 
 add_subdirectory(nn/)
-add_subdirectory(ray_marcher/)
 add_subdirectory(lib/)
 add_subdirectory(test/unit/)
 add_subdirectory(bin/)

@@ -9,7 +9,7 @@ INPUT_DIM = 3
 OUT_DIM = 1
 
 
-def read_points(path):
+def load_points(path):
     with open(path, "rb") as f:
         (n,) = struct.unpack("i", f.read(4))
         points = np.fromfile(f, dtype=np.float32, count=3 * n, sep="").reshape(-1, 3)
@@ -90,7 +90,7 @@ def compare_sdfs(
     net = load_siren_network(weights_path, n_hidden=n_hidden, hidden_size=hidden_size)
     print(f"Loaded network, total params: {net.n_params()}")
 
-    points, gt_sdfs = read_points(points_path)
+    points, gt_sdfs = load_points(points_path)
     print(f"Loaded points, shape: {points.shape}")
 
     print(f"Comparing first {n_points_show} sdf values with predictions:")

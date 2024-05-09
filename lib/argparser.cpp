@@ -21,14 +21,3 @@ std::tuple<int,int,int> ArgParser::get_network_setup() const
     int batch_size = getOptionValue<int>("--batch_size");
     return std::tuple<int,int,int>{n_hidden_layers, hidden_size, batch_size};
 }
-
-
-int ArgParser::get_n_threads() const
-{
-    int n_threads = 1;
-    if (hasOption("--n_threads")) {
-        int got_threads = getOptionValue<int>("--n_threads");
-        n_threads = std::max(got_threads, 1);
-    }
-    return n_threads;
-}

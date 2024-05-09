@@ -47,3 +47,6 @@ nn/*generated*
 
 # vs code
 .vscode/
+
+# jupyter notebooks
+notebooks/
