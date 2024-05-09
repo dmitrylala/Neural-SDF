@@ -254,9 +254,9 @@ void SirenNetwork::forward(float *res, const float *input, int batch_size)
     }
 
     int last_out_dim = m_layers_shapes.back().first;
-    int res_offset = m_outputs.size() - m_batch_size * last_out_dim;
+    m_outputs_end = out_offset - m_batch_size * last_out_dim;
     for (int i = 0; i < m_batch_size * last_out_dim; ++i) {
-        res[i] = m_outputs[res_offset + i];
+        res[i] = m_outputs[m_outputs_end + i];
     }
 }
 
@@ -271,7 +271,7 @@ void SirenNetwork::backward(const float *y_gt)
     
     // firstly: compute mse gradient
     // shape is [out_dim, batch_size]
-    int outputs_offset = m_outputs.size() - m_batch_size * last_out_dim;
+    int outputs_offset = m_outputs_end;
     int out_grads_offset = outputs_offset;
     kernel1D_mse_grad(
         m_out_grads.data(), m_outputs.data(), m_gt_buffer.data(),

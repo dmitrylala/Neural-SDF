@@ -40,10 +40,10 @@ train: ## Run train
 	./$(BUILD_DIR)/bin/train \
 		--n_hidden 2 \
 		--hidden_size 64 \
-		--batch_size 500 \
+		--batch_size 512 \
 		--train_sample $(POINTS)/sdf1_train.bin \
 		--train_cfg $(CONF)/train.txt \
-		--save_to $(WEIGHTS)/sdf1_trained_weights_500.bin
+		--save_to $(WEIGHTS)/sdf1_trained_weights_512.bin
 
 render: ## Run render
 	@echo "=== Running render ==="
@@ -51,10 +51,10 @@ render: ## Run render
 		--n_hidden 2 \
 		--hidden_size 64 \
 		--batch_size 1 \
-		--weights $(WEIGHTS)/sdf1_trained_weights_500.bin \
+		--weights $(WEIGHTS)/sdf1_trained_weights_512.bin \
 		--camera $(CONF)/camera_1.txt \
 		--light $(CONF)/light.txt \
-		--save_to $(PICTURES)/out_cpu_cpp_bsize_500.bmp
+		--save_to $(PICTURES)/out_cpu_cpp_bsize_512.bmp
 
 test_unit: ## Run unit tests
 	@echo "=== Running unit tests ==="

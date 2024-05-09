@@ -81,7 +81,7 @@ public:
 protected:
     std::vector<float> m_weights_biases, m_weights_grads, m_outputs, m_out_grads;
     std::vector<std::pair<int,int>> m_layers_shapes;
-    int m_batch_size;
+    int m_batch_size, m_outputs_end;
     
     // for copying y_gt batch for loss computation
     std::vector<float> m_gt_buffer;
