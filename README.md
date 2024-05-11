@@ -1,10 +1,52 @@
 # Neural SDF
 
-TODO: Описание проекта.
+Обучение и рендеринг нейронной SDF с [архитектурой SIREN](https://arxiv.org/pdf/2006.09661). 
+
+Реализовано:
+- Прямой проход сети
+- Расчет градиентов и обратный проход
+- Шаг оптимизатора Adam
+
+<figure>
+    <img src="data/pictures/out_cpu_cpp_bsize_500.bmp" alt="drawing" width="400"/>
+    <figcaption>Рендер с помощью обученной функции дистанции</figcaption>
+</figure>
 
 ## Интерфейс запуска, замеры времени
 
-TODO.
+Обучение производится со следующими параметрами:
+```bash
+# для запуска
+source .env && make train
+
+# параметры прописаны в Makefile
+./$(BUILD_DIR)/bin/train \
+    --n_hidden 2 \                                     # число скрытых слоев
+    --hidden_size 64 \                                 # размерность скрытых слоев
+    --batch_size 512 \                                 # батч сайз для обучения
+    --train_sample $(POINTS)/sdf1_train.bin \          # обучающая выборка
+    --train_cfg $(CONF)/train.txt \                    # конфиг с lr, числом эпох
+    --save_to $(WEIGHTS)/sdf1_trained_weights_512.bin  # куда сохранить веса
+```
+
+Опции для рендера:
+```bash
+# для запуска
+source .env && make render
+
+./$(BUILD_DIR)/bin/render \
+    --n_hidden 2 \                                      # число скрытых слоев
+    --hidden_size 64 \                                  # число скрытых слоев                                  
+    --batch_size 1 \                                    # батч сайз для инференса (поддержан только = 1)
+    --weights $(WEIGHTS)/sdf1_trained_weights_512.bin \ # веса для загрузки
+    --camera $(CONF)/camera_1.txt \                     # конфиг камеры
+    --light $(CONF)/light.txt \                         # конфиг с источником света
+    --save_to $(PICTURES)/out_cpu_cpp_bsize_512.bmp     # куда сохранить рендер
+```
+
+В зависимости от сборки запуск будет автоматически происходить либо на CPU, либо на GPU.
+
+По времени: трейн в среднем занимает ~3 минуты, рендер 30-40 секунд. При сборке под GPU заметного ускорения нет.
 
 ## Сборка
 
@@ -46,6 +88,7 @@ build_gpu                      Configure and build for GPU
 train                          Run train
 render                         Run render
 test_unit                      Run unit tests
+train_py                       Train network with numpy
 infer_py                       Run network inference on python
 ```
 
